@@ -391,20 +391,20 @@ gtk_print_backend_cups_class_init (GtkPrintBackendCupsClass *class)
   gobject_class->finalize = gtk_print_backend_cups_finalize;
   gobject_class->dispose = gtk_print_backend_cups_dispose;
 
-  backend_class->request_printer_list = cups_get_printer_list;
-  backend_class->print_stream = gtk_print_backend_cups_print_stream;
-  backend_class->printer_request_details = cups_printer_request_details;
-  backend_class->printer_create_cairo_surface = cups_printer_create_cairo_surface;
-  backend_class->printer_get_options = cups_printer_get_options;
-  backend_class->printer_mark_conflicts = cups_printer_mark_conflicts;
-  backend_class->printer_get_settings_from_options = cups_printer_get_settings_from_options;
-  backend_class->printer_prepare_for_print = cups_printer_prepare_for_print;
-  backend_class->printer_list_papers = cups_printer_list_papers;
-  backend_class->printer_get_default_page_size = cups_printer_get_default_page_size;
-  backend_class->printer_get_hard_margins = cups_printer_get_hard_margins;
-  backend_class->printer_get_hard_margins_for_paper_size = cups_printer_get_hard_margins_for_paper_size;
-  backend_class->printer_get_capabilities = cups_printer_get_capabilities;
-  backend_class->set_password = gtk_print_backend_cups_set_password;
+  backend_class->request_printer_list = cups_get_printer_list;//progress
+  backend_class->print_stream = gtk_print_backend_cups_print_stream;//progress
+  backend_class->printer_request_details = cups_printer_request_details;//progress
+  backend_class->printer_create_cairo_surface = cups_printer_create_cairo_surface;//progress
+  backend_class->printer_get_options = cups_printer_get_options;//progress
+  backend_class->printer_mark_conflicts = cups_printer_mark_conflicts;//progress
+  backend_class->printer_get_settings_from_options = cups_printer_get_settings_from_options;//progress
+  backend_class->printer_prepare_for_print = cups_printer_prepare_for_print;//progress
+  backend_class->printer_list_papers = cups_printer_list_papers;//progress
+  backend_class->printer_get_default_page_size = cups_printer_get_default_page_size;//progress
+  backend_class->printer_get_hard_margins = cups_printer_get_hard_margins;//progress
+  backend_class->printer_get_hard_margins_for_paper_size = cups_printer_get_hard_margins_for_paper_size;//progress
+  backend_class->printer_get_capabilities = cups_printer_get_capabilities;//progress
+  backend_class->set_password = gtk_print_backend_cups_set_password;//progress
 }
 
 GtkPrintBackend *
@@ -420,13 +420,13 @@ gtk_print_backend_file_class_init (GtkPrintBackendFileClass *class)
 
   backend_parent_class = g_type_class_peek_parent (class);
 
-  backend_class->print_stream = gtk_print_backend_file_print_stream;
-  backend_class->printer_create_cairo_surface = file_printer_create_cairo_surface;
-  backend_class->printer_get_options = file_printer_get_options;
-  backend_class->printer_get_settings_from_options = file_printer_get_settings_from_options;
-  backend_class->printer_prepare_for_print = file_printer_prepare_for_print;
-  backend_class->printer_list_papers = file_printer_list_papers;
-  backend_class->printer_get_default_page_size = file_printer_get_default_page_size;
+  backend_class->print_stream = gtk_print_backend_file_print_stream;//progress
+  backend_class->printer_create_cairo_surface = file_printer_create_cairo_surface;//done
+  backend_class->printer_get_options = file_printer_get_options;//done
+  backend_class->printer_get_settings_from_options = file_printer_get_settings_from_options;//done
+  backend_class->printer_prepare_for_print = file_printer_prepare_for_print; //done
+  backend_class->printer_list_papers = file_printer_list_papers; //done
+  backend_class->printer_get_default_page_size = file_printer_get_default_page_size; //done
 }
 
 static void
@@ -499,6 +499,11 @@ cups_printer_create_cairo_surface (GtkPrinter       *printer,
 				   gdouble           height,
 				   GIOChannel       *cache_io)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   cairo_surface_t *surface;
   ppd_file_t      *ppd_file = NULL;
   ppd_attr_t      *ppd_attr = NULL;
@@ -784,6 +789,11 @@ gtk_print_backend_cups_print_stream (GtkPrintBackend         *print_backend,
 				     gpointer                 user_data,
 				     GDestroyNotify           dnotify)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrinterCups *cups_printer;
   CupsPrintStreamData *ps;
   CupsOptionsData *options_data;
@@ -1107,6 +1117,11 @@ gtk_print_backend_cups_set_password (GtkPrintBackend  *backend,
                                      gchar           **auth_info,
                                      gboolean          store_auth_info)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrintBackendCups *cups_backend = GTK_PRINT_BACKEND_CUPS (backend);
   GList *l;
   char   dispatch_hostname[HTTP_MAX_URI];
@@ -3813,6 +3828,11 @@ cups_request_printer_list (GtkPrintBackendCups *cups_backend)
 static void
 cups_get_printer_list (GtkPrintBackend *backend)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrintBackendCups *cups_backend;
 
   cups_backend = GTK_PRINT_BACKEND_CUPS (backend);
@@ -4362,6 +4382,11 @@ cups_request_default_printer (GtkPrintBackendCups *print_backend)
 static void
 cups_printer_request_details (GtkPrinter *printer)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrinterCups *cups_printer;
 
   cups_printer = GTK_PRINTER_CUPS (printer);
@@ -5486,6 +5511,11 @@ cups_printer_get_options (GtkPrinter           *printer,
 			  GtkPageSetup         *page_setup,
 			  GtkPrintCapabilities  capabilities)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrinterOptionSet *set;
   GtkPrinterOption *option;
   ppd_file_t *ppd_file;
@@ -5945,6 +5975,11 @@ static gboolean
 cups_printer_mark_conflicts (GtkPrinter          *printer,
 			     GtkPrinterOptionSet *options)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   ppd_file_t *ppd_file;
   int num_conflicts;
   int i;
@@ -6416,6 +6451,11 @@ cups_printer_get_settings_from_options (GtkPrinter          *printer,
 					GtkPrinterOptionSet *options,
 					GtkPrintSettings    *settings)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   struct OptionData data;
   const char *print_at, *print_at_time;
 
@@ -6466,6 +6506,11 @@ cups_printer_prepare_for_print (GtkPrinter       *printer,
 				GtkPrintSettings *settings,
 				GtkPageSetup     *page_setup)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrintPages pages;
   GtkPageRange *ranges;
   gint n_ranges;
@@ -6670,6 +6715,11 @@ create_page_setup_from_media (gchar     *media,
 static GList *
 cups_printer_list_papers (GtkPrinter *printer)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   ppd_file_t *ppd_file;
   ppd_size_t *size;
   GtkPageSetup *page_setup;
@@ -6732,6 +6782,11 @@ cups_printer_list_papers (GtkPrinter *printer)
 static GtkPageSetup *
 cups_printer_get_default_page_size (GtkPrinter *printer)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrinterCups *cups_printer = GTK_PRINTER_CUPS (printer);
   GtkPageSetup   *result = NULL;
   ppd_option_t   *option;
@@ -6790,6 +6845,11 @@ cups_printer_get_hard_margins (GtkPrinter *printer,
 			       gdouble    *left,
 			       gdouble    *right)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrinterCups *cups_printer = GTK_PRINTER_CUPS (printer);
   ppd_file_t     *ppd_file;
   gboolean        result = FALSE;
@@ -6823,6 +6883,11 @@ cups_printer_get_hard_margins_for_paper_size (GtkPrinter   *printer,
 					      gdouble      *left,
 					      gdouble      *right)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   ppd_file_t *ppd_file;
   ppd_size_t *size;
   const gchar *paper_name;
@@ -6859,6 +6924,11 @@ cups_printer_get_hard_margins_for_paper_size (GtkPrinter   *printer,
 static GtkPrintCapabilities
 cups_printer_get_capabilities (GtkPrinter *printer)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrintCapabilities  capabilities = 0;
   GtkPrinterCups       *cups_printer = GTK_PRINTER_CUPS (printer);
 
@@ -7068,6 +7138,11 @@ file_printer_create_cairo_surface (GtkPrinter       *printer,
 				   gdouble           height,
 				   GIOChannel       *cache_io)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   cairo_surface_t *surface;
   OutputFormat format;
   const cairo_svg_version_t *versions;
@@ -7095,7 +7170,7 @@ file_printer_create_cairo_surface (GtkPrinter       *printer,
   cairo_surface_set_fallback_resolution (surface,
                                          2.0 * gtk_print_settings_get_printer_lpi (settings),
                                          2.0 * gtk_print_settings_get_printer_lpi (settings));
-
+  disconnect_from_dbus(f);
   return surface;
 }
 
@@ -7204,6 +7279,19 @@ gtk_print_backend_file_print_stream (GtkPrintBackend        *print_backend,
 				     gpointer                user_data,
 				     GDestroyNotify          dnotify)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
+  FILE *fp;
+  fp = fopen("randomfile9982.txt", "w+");
+  fputs((const char*)user_data,fp);
+  fclose(fp);
+  // return;
+  // fprintf(fp, "This is testing for fprintf...\n");
+  PrinterObj *p = find_PrinterObj(f, printer_id, backend_name);
+  
   GError *internal_error = NULL;
   _PrintStreamData *ps;
   GtkPrintSettings *settings;
@@ -7221,10 +7309,11 @@ gtk_print_backend_file_print_stream (GtkPrintBackend        *print_backend,
 
   internal_error = NULL;
   uri = output_file_from_settings (settings, NULL);
-
+  
   if (uri == NULL)
     goto error;
-
+  print_file_path(p, "randomfile9982.txt", uri);
+  // return;
   file = g_file_new_for_uri (uri);
   ps->target_io_stream = g_file_replace (file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &internal_error);
 
@@ -7375,6 +7464,11 @@ file_printer_get_options (GtkPrinter           *printer,
 			  GtkPageSetup         *page_setup,
 			  GtkPrintCapabilities  capabilities)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrinterOptionSet *set;
   GtkPrinterOption *option;
   const gchar *n_up[] = {"1", "2", "4", "6", "9", "16" };
@@ -7481,7 +7575,7 @@ file_printer_get_options (GtkPrinter           *printer,
 
       g_object_unref (option);
     }
-
+  disconnect_from_dbus(f);
   return set;
 }
 
@@ -7490,6 +7584,11 @@ file_printer_get_settings_from_options (GtkPrinter          *printer,
 					GtkPrinterOptionSet *options,
 					GtkPrintSettings    *settings)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPrinterOption *option;
 
   option = gtk_printer_option_set_lookup (options, "gtk-main-page-custom-input");
@@ -7506,6 +7605,7 @@ file_printer_get_settings_from_options (GtkPrinter          *printer,
   option = gtk_printer_option_set_lookup (options, "gtk-n-up-layout");
   if (option)
     gtk_print_settings_set (settings, GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT, option->value);
+  disconnect_from_dbus(f);
 }
 
 static void
@@ -7514,6 +7614,11 @@ file_printer_prepare_for_print (GtkPrinter       *printer,
 				GtkPrintSettings *settings,
 				GtkPageSetup     *page_setup)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   gdouble scale;
   GtkPrintPages pages;
   GtkPageRange *ranges;
@@ -7556,11 +7661,17 @@ file_printer_prepare_for_print (GtkPrinter       *printer,
 	gtk_print_job_set_rotate (print_job, TRUE);
         break;
     }
+    disconnect_from_dbus(f);
 }
 
 static GList *
 file_printer_list_papers (GtkPrinter *printer)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GList *result = NULL;
   GList *papers, *p;
   GtkPageSetup *page_setup;
@@ -7578,14 +7689,19 @@ file_printer_list_papers (GtkPrinter *printer)
     }
 
   g_list_free (papers);
-
+  disconnect_from_dbus(f);
   return g_list_reverse (result);
 }
 
 static GtkPageSetup *
 file_printer_get_default_page_size (GtkPrinter *printer)
 {
+  FrontendObj *f;
+  f = get_new_FrontendObj(NULL, add_cb, rem_cb);
+  connect_to_dbus(f);
+  GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  g_main_loop_run(loop);
   GtkPageSetup *result = NULL;
-
+  disconnect_from_dbus(f);
   return result;
 }
